@@ -147,7 +147,7 @@ export default function TrackPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Lacak Pesanan</h1>
@@ -165,9 +165,9 @@ export default function TrackPage() {
           <Button className="mt-4" onClick={() => window.location.href = "/customer/order"}>Pesan Sekarang</Button>
         </div>
       ) : (
-        <>
-          {/* Order List */}
-          <div className="space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          {/* Order List (Left Side) */}
+          <div className="space-y-2 md:col-span-1 max-h-[calc(100vh-220px)] overflow-y-auto pr-2">
             {orders.map((order) => (
               <div
                 key={order.id}
@@ -192,112 +192,119 @@ export default function TrackPage() {
             ))}
           </div>
 
-          {/* Order Detail */}
-          {selectedOrder && (
-            <>
-              {/* Waiting for payment banner */}
-              {selectedOrder.status === "waiting_for_payment" && payment && (
-                <Card className="border-destructive bg-destructive/5">
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <AlertCircle className="h-5 w-5 text-destructive" />
-                        <p className="font-semibold text-sm">Menunggu Pembayaran</p>
+          {/* Order Detail (Right Side) */}
+          <div className="space-y-4 md:col-span-2">
+            {selectedOrder ? (
+              <>
+                {/* Waiting for payment banner */}
+                {selectedOrder.status === "waiting_for_payment" && payment && (
+                  <Card className="border-destructive bg-destructive/5">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <AlertCircle className="h-5 w-5 text-destructive" />
+                          <p className="font-semibold text-sm">Menunggu Pembayaran</p>
+                        </div>
+                        <div className={`font-mono font-bold text-lg ${timeLeft < 60000 ? "text-destructive" : "text-foreground"}`}>
+                          {countdownFormatted}
+                        </div>
                       </div>
-                      <div className={`font-mono font-bold text-lg ${timeLeft < 60000 ? "text-destructive" : "text-foreground"}`}>
-                        {countdownFormatted}
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Selesaikan pembayaran sebelum waktu habis atau pesanan akan otomatis dibatalkan.
-                    </p>
-                    <Button className="w-full" onClick={handlePayNow}>
-                      <CreditCard className="h-4 w-4 mr-2" /> Bayar Sekarang
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
+                      <p className="text-xs text-muted-foreground">
+                        Selesaikan pembayaran sebelum waktu habis atau pesanan akan otomatis dibatalkan.
+                      </p>
+                      <Button className="w-full" onClick={handlePayNow}>
+                        <CreditCard className="h-4 w-4 mr-2" /> Bayar Sekarang
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="font-mono text-base">#{selectedOrder.id}</CardTitle>
-                  <Badge variant={statusBadge[selectedOrder.status]?.variant ?? "outline"}>
-                    {statusBadge[selectedOrder.status]?.label ?? selectedOrder.status}
-                  </Badge>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {/* Payment method info */}
-                  {payment && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {payment.method === "cod"
-                        ? <><Banknote className="h-3.5 w-3.5" /> Bayar di Tempat (COD)</>
-                        : <><CreditCard className="h-3.5 w-3.5" /> Transfer / E-Wallet</>
-                      }
-                    </div>
-                  )}
-
-                  <div className="space-y-1">
-                    {selectedOrder.items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span>{item.menu_item.name} <span className="text-muted-foreground">x{item.quantity}</span></span>
-                        <span>Rp {item.subtotal.toLocaleString("id-ID")}</span>
-                      </div>
-                    ))}
-                    <div className="border-t pt-2 flex justify-between font-bold text-sm">
-                      <span>Total</span>
-                      <span>Rp {selectedOrder.total_price.toLocaleString("id-ID")}</span>
-                    </div>
-                  </div>
-
-                  {(selectedOrder.status === "waiting_for_payment" || selectedOrder.status === "pending" || selectedOrder.status === "confirmed") && (
-                    <Button variant="destructive" size="sm" className="w-full" onClick={handleCancel} disabled={isCancelling}>
-                      {isCancelling ? "Membatalkan..." : "Batalkan Pesanan"}
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Tracking Steps */}
-              {selectedOrder.status !== "cancelled" && selectedOrder.status !== "waiting_for_payment" ? (
                 <Card>
-                  <CardHeader><CardTitle className="text-base">Status Pesanan</CardTitle></CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {steps.map((step, index) => {
-                        const Icon = step.icon;
-                        const isDone = index <= currentStep;
-                        const isCurrent = index === currentStep;
-                        return (
-                          <div key={step.key} className="flex items-start gap-4">
-                            <div className="flex flex-col items-center">
-                              <div className={isDone ? "text-primary" : "text-muted-foreground"}>
-                                {isDone ? <CheckCircle className="h-6 w-6" /> : <Circle className="h-6 w-6" />}
-                              </div>
-                              {index < steps.length - 1 && (
-                                <div className={`w-0.5 h-8 mt-1 ${index < currentStep ? "bg-primary" : "bg-muted"}`} />
-                              )}
-                            </div>
-                            <div className={`pt-1 ${!isDone ? "opacity-40" : ""}`}>
-                              <p className={`text-sm font-medium ${isCurrent ? "text-primary" : ""}`}>{step.label}</p>
-                              <p className="text-xs text-muted-foreground">{step.desc}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="font-mono text-base">#{selectedOrder.id}</CardTitle>
+                    <Badge variant={statusBadge[selectedOrder.status]?.variant ?? "outline"}>
+                      {statusBadge[selectedOrder.status]?.label ?? selectedOrder.status}
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {/* Payment method info */}
+                    {payment && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        {payment.method === "cod"
+                          ? <><Banknote className="h-3.5 w-3.5" /> Bayar di Tempat (COD)</>
+                          : <><CreditCard className="h-3.5 w-3.5" /> Transfer / E-Wallet</>
+                        }
+                      </div>
+                    )}
+
+                    <div className="space-y-1">
+                      {selectedOrder.items.map((item) => (
+                        <div key={item.id} className="flex justify-between text-sm">
+                          <span>{item.menu_item.name} <span className="text-muted-foreground">x{item.quantity}</span></span>
+                          <span>Rp {item.subtotal.toLocaleString("id-ID")}</span>
+                        </div>
+                      ))}
+                      <div className="border-t pt-2 flex justify-between font-bold text-sm">
+                        <span>Total</span>
+                        <span>Rp {selectedOrder.total_price.toLocaleString("id-ID")}</span>
+                      </div>
                     </div>
+
+                    {(selectedOrder.status === "waiting_for_payment" || selectedOrder.status === "pending" || selectedOrder.status === "confirmed") && (
+                      <Button variant="destructive" size="sm" className="w-full" onClick={handleCancel} disabled={isCancelling}>
+                        {isCancelling ? "Membatalkan..." : "Batalkan Pesanan"}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
-              ) : selectedOrder.status === "cancelled" ? (
-                <Card className="border-destructive">
-                  <CardContent className="flex items-center gap-3 p-4 text-destructive">
-                    <XCircle className="h-5 w-5" />
-                    <p className="text-sm font-medium">Pesanan ini telah dibatalkan</p>
-                  </CardContent>
-                </Card>
-              ) : null}
-            </>
-          )}
-        </>
+
+                {/* Tracking Steps */}
+                {selectedOrder.status !== "cancelled" && selectedOrder.status !== "waiting_for_payment" ? (
+                  <Card>
+                    <CardHeader><CardTitle className="text-base">Status Pesanan</CardTitle></CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {steps.map((step, index) => {
+                          const Icon = step.icon;
+                          const isDone = index <= currentStep;
+                          const isCurrent = index === currentStep;
+                          return (
+                            <div key={step.key} className="flex items-start gap-4">
+                              <div className="flex flex-col items-center">
+                                <div className={isDone ? "text-primary" : "text-muted-foreground"}>
+                                  {isDone ? <CheckCircle className="h-6 w-6" /> : <Circle className="h-6 w-6" />}
+                                </div>
+                                {index < steps.length - 1 && (
+                                  <div className={`w-0.5 h-8 mt-1 ${index < currentStep ? "bg-primary" : "bg-muted"}`} />
+                                )}
+                              </div>
+                              <div className={`pt-1 ${!isDone ? "opacity-40" : ""}`}>
+                                <p className={`text-sm font-medium ${isCurrent ? "text-primary" : ""}`}>{step.label}</p>
+                                <p className="text-xs text-muted-foreground">{step.desc}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : selectedOrder.status === "cancelled" ? (
+                  <Card className="border-destructive">
+                    <CardContent className="flex items-center gap-3 p-4 text-destructive">
+                      <XCircle className="h-5 w-5" />
+                      <p className="text-sm font-medium">Pesanan ini telah dibatalkan</p>
+                    </CardContent>
+                  </Card>
+                ) : null}
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 border rounded-lg text-muted-foreground bg-muted/20">
+                <Clock className="h-8 w-8 mb-2" />
+                <p>Pilih pesanan untuk melihat detail</p>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
