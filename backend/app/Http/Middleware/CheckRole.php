@@ -5,9 +5,13 @@ use Illuminate\Http\Request;
 
 class CheckRole {
     public function handle(Request $request, Closure $next, string $role): mixed {
-        if ($request->user()?->role !== $role) {
+        $user = $request->user();
+        if (!$user) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
-        return $next($request);
+        if ($user->role === 'admin' || $user->role === $role) {
+            return $next($request);
+        }
+        return response()->json(['message' => 'Forbidden'], 403);
     }
 }

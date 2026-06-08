@@ -73,6 +73,7 @@ Route::prefix('auth')->group(function () {
                 Route::get('/users',                 [AdminController::class, 'users']);
                 Route::patch('/users/{id}/activate', [AdminController::class, 'activate']);
                 Route::get('/stats',                 [AdminController::class, 'stats']);
+                Route::get('/canteens',              [AdminController::class, 'canteens']);
             });
     });
 });

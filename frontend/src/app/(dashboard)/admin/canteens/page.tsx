@@ -28,7 +28,8 @@ export default function AdminCanteensPage() {
   const handleToggle = async (canteen: Canteen) => {
     setTogglingId(canteen.id);
     try {
-      const updated = await canteenApi.toggle(canteen.id);
+      const res = await canteenApi.toggle(canteen.id);
+      const updated = res.canteen || res;
       setCanteens((prev) => prev.map((c) => c.id === updated.id ? updated : c));
       toast.success(`${updated.name} ${updated.is_open ? "dibuka" : "ditutup"}`);
     } catch {

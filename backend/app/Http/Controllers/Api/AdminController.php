@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Canteen;
+use App\Models\MenuItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -30,9 +31,20 @@ class AdminController extends Controller
             'total_users' => User::count(),
             'total_canteens' => Canteen::count(),
             'total_orders' => Order::count(),
-            'completed_orders' => Order::where('status', 'completed')->count(),
+            'active_orders' => Order::whereNotIn('status', ['delivered', 'cancelled'])->count(),
+            'total_menu_items' => MenuItem::count(),
+            'users_by_role' => [
+                'customer' => User::where('role', 'customer')->count(),
+                'canteen' => User::where('role', 'canteen')->count(),
+                'admin' => User::where('role', 'admin')->count(),
+            ]
         ];
 
         return response()->json($stats);
+    }
+
+    public function canteens(): JsonResponse
+    {
+        return response()->json(Canteen::all());
     }
 }
