@@ -118,7 +118,7 @@ export default function TopNavbar() {
         )}
 
         <div className="flex items-center gap-4">
-          {path === "/" && (
+          {path === "/" && user?.role === "customer" && (
             <div className="hidden md:flex items-center ml-8">
               <form onSubmit={handleSearchSubmit} className="relative group">
                 <div className="relative flex items-center">
