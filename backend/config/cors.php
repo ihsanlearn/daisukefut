@@ -12,7 +12,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3001')],
+    'allowed_origins' => array_map('trim', explode(',', env('ALLOWED_ORIGINS', env('FRONTEND_URL', 'http://localhost:3001')))),
 
     'allowed_origins_patterns' => [],
 
