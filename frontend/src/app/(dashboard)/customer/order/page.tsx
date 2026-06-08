@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { canteenApi } from "@/lib/api/canteen";
 import { menuApi } from "@/lib/api/menu";
 import { Canteen } from "@/types/canteen";
@@ -16,7 +16,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/com
 import { Search, ShoppingCart, Plus, Minus, Trash2, MapPin, UtensilsCrossed } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function OrderPage() {
+function OrderPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [canteens, setCanteens] = useState<Canteen[]>([]);
@@ -248,5 +248,22 @@ export default function OrderPage() {
         </SheetContent>
       </Sheet>
     </div>
+  );
+}
+
+export default function OrderPage() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-8 animate-pulse">
+        <div className="h-8 w-64 bg-muted rounded mb-4" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="h-28 bg-muted rounded-xl" />
+          <div className="h-28 bg-muted rounded-xl" />
+          <div className="h-28 bg-muted rounded-xl" />
+        </div>
+      </div>
+    }>
+      <OrderPageContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { orderApi } from "@/lib/api/order";
 import { paymentApi } from "@/lib/api/payment";
@@ -56,7 +56,7 @@ function useCountdown(expiredAt?: string) {
   return { timeLeft, formatted: `${minutes}:${seconds.toString().padStart(2, "0")}` };
 }
 
-export default function TrackPage() {
+function TrackPageContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("order_id");
 
@@ -307,6 +307,19 @@ export default function TrackPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TrackPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-2xl mx-auto space-y-4 animate-pulse">
+        <div className="h-8 w-48 bg-muted rounded" />
+        <div className="h-64 bg-muted rounded" />
+      </div>
+    }>
+      <TrackPageContent />
+    </Suspense>
   );
 }
 

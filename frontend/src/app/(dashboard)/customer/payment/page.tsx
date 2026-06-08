@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { paymentApi, PaymentDetails } from "@/lib/api/payment";
 import { Payment } from "@/types/payment";
@@ -22,7 +22,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
   failed: { label: "Pembayaran Gagal", color: "bg-red-500/15 text-red-700 border-red-200", icon: <XCircle className="h-4 w-4" /> },
 };
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("order_id");
@@ -279,5 +279,19 @@ export default function PaymentPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-lg mx-auto space-y-6 animate-pulse">
+        <div className="h-8 w-48 bg-muted rounded" />
+        <div className="h-64 bg-muted rounded" />
+        <div className="h-32 bg-muted rounded" />
+      </div>
+    }>
+      <PaymentPageContent />
+    </Suspense>
   );
 }
