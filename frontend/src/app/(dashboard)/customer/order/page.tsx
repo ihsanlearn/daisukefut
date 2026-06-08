@@ -14,10 +14,11 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Search, ShoppingCart, Plus, Minus, Trash2, MapPin, UtensilsCrossed } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function OrderPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [canteens, setCanteens] = useState<Canteen[]>([]);
   const [search, setSearch] = useState("");
   const [isLoadingCanteens, setIsLoadingCanteens] = useState(true);
@@ -27,6 +28,10 @@ export default function OrderPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    setSearch(searchParams.get("search") || "");
+  }, [searchParams]);
 
   const { canteenId, canteenName, items, addItem, removeItem, updateQty, clearCart } = useCartStore();
 

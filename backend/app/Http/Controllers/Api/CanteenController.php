@@ -16,7 +16,7 @@ class CanteenController extends Controller
     public function index(): JsonResponse
     {
         $canteens = Canteen::where('is_open', true)
-            ->with('owner', 'menuItems')
+            ->with('owner', 'menuItems.category')
             ->get();
 
         return response()->json(CanteenResource::collection($canteens));
@@ -27,7 +27,7 @@ class CanteenController extends Controller
      */
     public function show($id): JsonResponse
     {
-        $canteen = Canteen::with('owner', 'menuItems')->findOrFail($id);
+        $canteen = Canteen::with('owner', 'menuItems.category')->findOrFail($id);
 
         return response()->json(new CanteenResource($canteen));
     }
@@ -38,7 +38,7 @@ class CanteenController extends Controller
     public function my(Request $request): JsonResponse
     {
         $canteen = Canteen::where('user_id', $request->user()->id)
-            ->with('menuItems')
+            ->with('menuItems.category')
             ->first();
 
         if (!$canteen) {

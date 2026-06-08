@@ -28,6 +28,8 @@ Route::prefix('auth')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::get('/me',      [AuthController::class, 'me']);
+            Route::patch('/me',    [AuthController::class, 'update']);
+            Route::post('/me/change-password', [AuthController::class, 'changePassword']);
 
             // Delivery points
             Route::apiResource('delivery-points', DeliveryPointController::class);

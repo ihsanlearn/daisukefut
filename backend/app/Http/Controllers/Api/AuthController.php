@@ -100,6 +100,48 @@ class AuthController extends Controller
     }
 
     /**
+     * PATCH /api/auth/me
+     */
+    public function update(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name'  => 'sometimes|string|max:100',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $user->update($validated);
+
+        return response()->json(new UserResource($user));
+    }
+
+    /**
+     * POST /api/auth/me/change-password
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'current_password' => 'required|string',
+            'new_password'     => ['required', 'string', Password::min(8)],
+        ]);
+
+        if (!Hash::check($validated['current_password'], $user->password_hash)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['Password saat ini salah.'],
+            ]);
+        }
+
+        $user->update([
+            'password_hash' => Hash::make($validated['new_password']),
+        ]);
+
+        return response()->json(['message' => 'Password berhasil diubah']);
+    }
+
+    /**
      * Format response user (hindari expose field sensitif)
      */
     private function userResource(User $user): array

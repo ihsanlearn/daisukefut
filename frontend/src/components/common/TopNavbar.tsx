@@ -11,7 +11,8 @@ import {
   ShoppingCart,
   User,
   LogOut,
-  Utensils
+  Utensils,
+  Menu
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -21,6 +22,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const navByRole = {
   admin: [
@@ -46,10 +55,18 @@ export default function TopNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const path = usePathname();
 
   const navItems = navByRole[user?.role ?? "notLoggedIn"] ?? [];
 
-  console.log(user)
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/customer/order?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -69,11 +86,11 @@ export default function TopNavbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/70 backdrop-blur-xl">
       <div className="container mx-auto max-w-7xl px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="bg-primary p-1.5 rounded-full">
-            <Utensils className="h-6 w-6 text-white" />
+        <Link href="/" className="flex items-center gap-1.5">
+          <div className="bg-primary p-1 rounded-full">
+            <Utensils className="h-4 w-4 text-white" />
           </div>
-          <span className="text-2xl font-extrabold text-primary tracking-tight">inCampus</span>
+          <span className="text-lg font-bold text-primary tracking-tight">inCampus</span>
         </Link>
 
         {/* Center Nav */}
@@ -100,20 +117,11 @@ export default function TopNavbar() {
         )}
 
         <div className="flex items-center gap-4">
-          <button className="text-muted-foreground hover:text-primary transition-colors">
-            <Search className="h-5 w-5" />
-          </button>
-          <button className="text-muted-foreground hover:text-primary transition-colors relative">
-            <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white ring-2 ring-white">
-              2
-            </span>
-          </button>
+
           
           <div className="h-8 w-px bg-border mx-2 hidden md:block"></div>
 
           {isAuthLoading ? (
-            /* Loading skeleton — prevents flash of "not logged in" */
             <div className="flex items-center gap-3">
               <div className="hidden md:flex flex-col items-end gap-1">
                 <div className="h-3 w-20 bg-muted rounded animate-pulse"></div>
@@ -122,7 +130,8 @@ export default function TopNavbar() {
               <div className="h-10 w-10 rounded-full bg-muted animate-pulse"></div>
             </div>
           ) : (
-          <DropdownMenu>
+            <>
+              <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center gap-3 cursor-pointer group">
                 {user && (
@@ -183,6 +192,67 @@ export default function TopNavbar() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {navItems.length > 0 && (
+            <div className="md:hidden">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-muted">
+                    <Menu className="h-5 w-5 text-foreground" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[280px] p-6 rounded-l-[2rem] border-l border-border/50 flex flex-col justify-between">
+                  <div className="space-y-6">
+                    <SheetHeader className="text-left">
+                      <SheetTitle className="flex items-center gap-2">
+                        <div className="bg-primary p-1.5 rounded-full">
+                          <Utensils className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="text-xl font-black text-primary tracking-tight">inCampus</span>
+                      </SheetTitle>
+                    </SheetHeader>
+
+                    {/* Nav Links */}
+                    <div className="flex flex-col gap-2 mt-4">
+                      {navItems.map((item) => {
+                        const isActive = pathname === item.href;
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                              "px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2",
+                              isActive
+                                ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            )}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Footer with Logout */}
+                  {user && (
+                    <div className="pt-6 border-t border-border/50">
+                      <Button
+                        variant="destructive"
+                        className="w-full rounded-2xl font-bold py-5 flex items-center justify-center gap-2"
+                        onClick={handleLogout}
+                        disabled={isLoggingOut}
+                      >
+                        <LogOut className="h-4 w-4" />
+                        {isLoggingOut ? "Keluar..." : "Keluar Akun"}
+                      </Button>
+                    </div>
+                  )}
+                </SheetContent>
+              </Sheet>
+            </div>
+          )}
+            </>
           )}
         </div>
       </div>
