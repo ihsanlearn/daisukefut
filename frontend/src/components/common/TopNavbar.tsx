@@ -30,6 +30,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Input } from "../ui/input";
 
 const navByRole = {
   admin: [
@@ -117,7 +118,22 @@ export default function TopNavbar() {
         )}
 
         <div className="flex items-center gap-4">
-
+          {path === "/" && (
+            <div className="hidden md:flex items-center ml-8">
+              <form onSubmit={handleSearchSubmit} className="relative group">
+                <div className="relative flex items-center">
+                  <Search className="absolute left-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <Input
+                    type="text"
+                    placeholder="Cari makanan..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 h-10 rounded-full bg-muted/50 focus:bg-white focus:border-primary focus:ring-1 focus:ring-primary transition-all border-transparent"
+                  />
+                </div>
+              </form>
+            </div>
+          )}
           
           <div className="h-8 w-px bg-border mx-2 hidden md:block"></div>
 
