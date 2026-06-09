@@ -21,6 +21,7 @@ import {
 import { canteenApi } from "@/lib/api/canteen";
 import { categoryApi, Category } from "@/lib/api/category";
 import { Canteen } from "@/types/canteen";
+import { formatPrice } from "@/lib/utils";
 
 // Map database category names to emojis
 const getCategoryEmoji = (name: string): string => {
@@ -386,7 +387,7 @@ export default function HomePage() {
                      
                      <div className="flex items-end justify-between mt-4">
                         <div className="flex flex-col">
-                           <span className="text-xl md:text-2xl font-black text-foreground">Rp {item.price.toLocaleString("id-ID")}</span>
+                           <span className="text-xl md:text-2xl font-black text-foreground">{formatPrice(item.price)}</span>
                         </div>
                         
                         <Link href="/customer/order" onClick={(e) => e.stopPropagation()}>

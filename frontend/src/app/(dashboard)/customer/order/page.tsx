@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
 import { Search, ShoppingCart, Plus, Minus, Trash2, MapPin, UtensilsCrossed } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { formatPrice } from "@/lib/utils";
 
 function OrderPageContent() {
   const router = useRouter();
@@ -172,7 +173,7 @@ function OrderPageContent() {
                           </div>
                           
                           <div className="mt-3 flex items-end justify-between">
-                            <p className="font-bold text-primary">Rp {item.price.toLocaleString("id-ID")}</p>
+                            <p className="font-bold text-primary">{formatPrice(item.price)}</p>
                             
                             <div className="flex items-center gap-2">
                               {qty > 0 ? (
@@ -215,7 +216,7 @@ function OrderPageContent() {
                 <div key={item.menu_item_id} className="flex items-center gap-3 p-3 rounded-lg border">
                   <div className="flex-1">
                     <p className="text-sm font-medium">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">Rp {item.price.toLocaleString("id-ID")}</p>
+                    <p className="text-xs text-muted-foreground">{formatPrice(item.price)}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => updateQty(item.menu_item_id, item.quantity - 1)}>
@@ -235,7 +236,7 @@ function OrderPageContent() {
             <SheetFooter className="flex-col gap-3 border-t pt-4">
               <div className="flex justify-between font-bold text-lg mb-2">
                 <span>Total</span>
-                <span className="text-primary">Rp {cartTotal.toLocaleString("id-ID")}</span>
+                <span className="text-primary">{formatPrice(cartTotal)}</span>
               </div>
               <Button size="lg" className="w-full rounded-full font-semibold h-12 text-base" onClick={() => { setIsCartOpen(false); router.push("/customer/checkout"); }}>
                 <ShoppingCart className="h-5 w-5 mr-2" /> Checkout Pembayaran

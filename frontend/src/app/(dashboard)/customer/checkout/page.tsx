@@ -19,6 +19,7 @@ import {
   MapPin, ShoppingBag, Loader2, CheckCircle,
   Plus, Trash2, QrCode,
 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -145,12 +146,12 @@ export default function CheckoutPage() {
           {isMounted && items.map((item) => (
             <div key={item.menu_item_id} className="flex justify-between text-sm">
               <span>{item.name} <span className="text-muted-foreground">x{item.quantity}</span></span>
-              <span>Rp {(item.price * item.quantity).toLocaleString("id-ID")}</span>
+              <span>{formatPrice(item.price * item.quantity)}</span>
             </div>
           ))}
           <div className="border-t pt-2 flex justify-between font-bold">
             <span>Total</span>
-            <span>Rp {isMounted ? cartTotal.toLocaleString("id-ID") : "0"}</span>
+            <span>{isMounted ? formatPrice(cartTotal) : "Rp0,00"}</span>
           </div>
         </CardContent>
       </Card>

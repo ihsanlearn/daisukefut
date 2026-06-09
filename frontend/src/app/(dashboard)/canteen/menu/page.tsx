@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Pencil, Trash2, Search, UtensilsCrossed } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 const emptyForm = {
   name: "",
@@ -273,7 +274,7 @@ export default function MenuPage() {
                     </div>
 
                     <div className="mt-4">
-                      <p className="text-[15px] font-bold text-primary">Rp {item.price.toLocaleString("id-ID")}</p>
+                      <p className="text-[15px] font-bold text-primary">{formatPrice(item.price)}</p>
                       <div className="flex items-center justify-between border-t border-border pt-3 mt-3">
                         <div className="flex items-center gap-2">
                           <Switch checked={item.is_available} onCheckedChange={() => handleToggleAvailable(item)} className="scale-75 origin-left" />

@@ -16,6 +16,7 @@ import {
   CheckCircle, Circle, Clock, ChefHat, Truck,
   MapPin, XCircle, RefreshCw, CreditCard, Banknote, AlertCircle,
 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 const steps = [
   { key: "pending",    label: "Pesanan Diterima",      icon: Clock,        desc: "Menunggu konfirmasi kantin" },
@@ -183,7 +184,7 @@ function TrackPageContent() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Rp {order.total_price.toLocaleString("id-ID")}</span>
+                  <span className="text-sm font-medium">{formatPrice(order.total_price)}</span>
                   <Badge variant={statusBadge[order.status]?.variant ?? "outline"}>
                     {statusBadge[order.status]?.label ?? order.status}
                   </Badge>
@@ -241,12 +242,12 @@ function TrackPageContent() {
                       {selectedOrder.items.map((item) => (
                         <div key={item.id} className="flex justify-between text-sm">
                           <span>{item.menu_item.name} <span className="text-muted-foreground">x{item.quantity}</span></span>
-                          <span>Rp {item.subtotal.toLocaleString("id-ID")}</span>
+                          <span>{formatPrice(item.subtotal)}</span>
                         </div>
                       ))}
                       <div className="border-t pt-2 flex justify-between font-bold text-sm">
                         <span>Total</span>
-                        <span>Rp {selectedOrder.total_price.toLocaleString("id-ID")}</span>
+                        <span>{formatPrice(selectedOrder.total_price)}</span>
                       </div>
                     </div>
 

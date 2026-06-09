@@ -16,6 +16,7 @@ import {
   PackageCheck, Clock, MapPin, FileText, ShoppingBag, ImageIcon, Loader2,
 } from "lucide-react";
 import apiClient from "@/lib/api/client";
+import { formatPrice } from "@/lib/utils";
 
 const canteenOrderApi = {
   list: async (status?: string): Promise<Order[]> => {
@@ -250,7 +251,7 @@ export default function CanteenOrdersPage() {
 
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="font-semibold text-foreground text-sm">
-                          Rp {Number(order.total_price).toLocaleString("id-ID")}
+                          {formatPrice(order.total_price)}
                         </span>
                         {order.notes && (
                           <span className="flex items-center gap-1 italic">
@@ -327,12 +328,12 @@ export default function CanteenOrdersPage() {
                 {selectedOrder.items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm p-2 rounded-lg bg-muted/30">
                     <span>{item.menu_item.name} <span className="text-muted-foreground">×{item.quantity}</span></span>
-                    <span className="font-medium">Rp {Number(item.subtotal).toLocaleString("id-ID")}</span>
+                    <span className="font-medium">{formatPrice(item.subtotal)}</span>
                   </div>
                 ))}
                 <div className="flex justify-between font-bold text-sm border-t pt-2">
                   <span>Total</span>
-                  <span>Rp {Number(selectedOrder.total_price).toLocaleString("id-ID")}</span>
+                  <span>{formatPrice(selectedOrder.total_price)}</span>
                 </div>
               </div>
 
@@ -393,7 +394,7 @@ export default function CanteenOrdersPage() {
             <div className="p-3 rounded-lg bg-muted/30">
               <div className="flex justify-between text-sm">
                 <span>Total Pembayaran</span>
-                <span className="font-bold text-primary">Rp {verifyingOrder ? Number(verifyingOrder.total_price).toLocaleString("id-ID") : "0"}</span>
+                <span className="font-bold text-primary">{verifyingOrder ? formatPrice(verifyingOrder.total_price) : "Rp0,00"}</span>
               </div>
             </div>
 

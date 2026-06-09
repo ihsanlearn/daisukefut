@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import apiClient from "@/lib/api/client";
 import { uploadApi } from "@/lib/api/upload";
+import { formatPrice } from "@/lib/utils";
 
 const canteenOrderApi = {
   list: async (status?: string): Promise<Order[]> => {
@@ -340,7 +341,7 @@ export default function CanteenDashboard() {
                       )}
 
                       <p className="text-xs font-medium mt-1.5">
-                        Rp {order.total_price.toLocaleString("id-ID")}
+                        {formatPrice(order.total_price)}
                       </p>
                     </div>
 

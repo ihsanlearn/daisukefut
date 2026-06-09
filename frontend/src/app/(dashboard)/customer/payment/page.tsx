@@ -13,6 +13,7 @@ import {
   QrCode, Upload, CheckCircle, Clock, XCircle, Loader2,
   ShoppingBag, AlertCircle, ArrowLeft, ImageIcon, RefreshCw,
 } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pending: { label: "Menunggu Bukti Pembayaran", color: "bg-amber-500/15 text-amber-700 border-amber-200", icon: <Clock className="h-4 w-4" /> },
@@ -32,7 +33,43 @@ function PaymentPageContent() {
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Format file harus JPG, PNG, atau WEBP");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File terlalu besar (maks 5MB)");
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
 
   useEffect(() => {
     if (!orderId) {
@@ -144,12 +181,12 @@ function PaymentPageContent() {
             {order.items?.map((item) => (
               <div key={item.id} className="flex justify-between text-sm">
                 <span>{item.menu_item?.name} <span className="text-muted-foreground">x{item.quantity}</span></span>
-                <span>Rp {Number(item.subtotal).toLocaleString("id-ID")}</span>
+                <span>{formatPrice(item.subtotal)}</span>
               </div>
             ))}
             <div className="border-t pt-2 flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span className="text-primary">Rp {Number(payment.amount).toLocaleString("id-ID")}</span>
+              <span className="text-primary">{formatPrice(payment.amount)}</span>
             </div>
           </div>
         </CardContent>
@@ -181,7 +218,7 @@ function PaymentPageContent() {
               </div>
             )}
             <p className="text-xs text-muted-foreground text-center max-w-xs">
-              Buka aplikasi e-wallet / m-banking, scan kode QRIS di atas, dan bayar sebesar <strong>Rp {Number(payment.amount).toLocaleString("id-ID")}</strong>
+              Buka aplikasi e-wallet / m-banking, scan kode QRIS di atas, dan bayar sebesar <strong>{formatPrice(payment.amount)}</strong>
             </p>
           </CardContent>
         </Card>
@@ -211,26 +248,52 @@ function PaymentPageContent() {
             />
 
             {preview ? (
-              <div className="relative">
+              <div 
+                className={`relative border-2 border-dashed rounded-xl p-2 transition-all duration-300 ${
+                  isDragging ? "border-primary bg-primary/5 scale-[1.01]" : "border-transparent"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={preview} alt="Preview" className="w-full max-h-64 object-contain rounded-lg border" />
                 <Button
                   variant="outline"
                   size="sm"
-                  className="absolute top-2 right-2"
+                  className="absolute top-4 right-4 shadow-sm"
                   onClick={() => { setSelectedFile(null); setPreview(null); }}
                 >
                   Ganti
                 </Button>
+                {isDragging && (
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-[1px] rounded-xl flex flex-col items-center justify-center pointer-events-none">
+                    <Upload className="h-10 w-10 text-primary animate-bounce mb-2" />
+                    <p className="text-sm font-semibold text-primary">Lepaskan untuk mengganti gambar</p>
+                  </div>
+                )}
               </div>
             ) : (
               <div
-                className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all"
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
+                  isDragging 
+                    ? "border-primary bg-primary/10 scale-[1.02] shadow-md shadow-primary/5" 
+                    : "border-muted-foreground/25 hover:border-primary/50 hover:bg-primary/5"
+                }`}
                 onClick={() => fileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
               >
-                <ImageIcon className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-sm font-medium text-muted-foreground">Klik untuk upload bukti transfer</p>
-                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP (maks 5MB)</p>
+                <div className={`transition-transform duration-300 ${isDragging ? "scale-105" : ""}`}>
+                  <Upload className={`h-10 w-10 mx-auto mb-3 transition-colors ${
+                    isDragging ? "text-primary animate-pulse" : "text-muted-foreground/50"
+                  }`} />
+                  <p className={`text-sm font-medium transition-colors ${isDragging ? "text-primary font-semibold" : "text-muted-foreground"}`}>
+                    {isDragging ? "Lepaskan file di sini" : "Tarik & Lepaskan atau Klik untuk upload bukti"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP (maks 5MB)</p>
+                </div>
               </div>
             )}
 

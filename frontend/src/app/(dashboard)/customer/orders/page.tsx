@@ -13,6 +13,7 @@ import {
   RefreshCw, Search, PackageCheck, Clock, ShoppingBag, ArrowRight, CreditCard
 } from "lucide-react";
 import { orderApi } from "@/lib/api/order";
+import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -203,7 +204,7 @@ export default function CustomerOrdersPage() {
                     <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 shrink-0 sm:pl-4 sm:border-l border-border/50">
                        <div className="text-left sm:text-right">
                           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-0.5">Total Belanja</p>
-                          <p className="font-black text-xl text-foreground">Rp {order.total_price.toLocaleString("id-ID")}</p>
+                          <p className="font-black text-xl text-foreground">{formatPrice(order.total_price)}</p>
                        </div>
                       {order.status === "waiting_for_payment" ? (
                         <Button

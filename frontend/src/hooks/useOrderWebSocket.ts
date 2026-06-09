@@ -14,6 +14,7 @@ export function useOrderWebSocket(onMessage: (msg: WSMessage) => void) {
   const { user } = useAuthStore();
   const wsRef = useRef<WebSocket | null>(null);
   const onMessageRef = useRef(onMessage);
+  const connectRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     onMessageRef.current = onMessage;
@@ -35,7 +36,7 @@ export function useOrderWebSocket(onMessage: (msg: WSMessage) => void) {
 
     ws.onclose = () => {
       // Auto reconnect setelah 3 detik
-      setTimeout(connect, 3000);
+      setTimeout(() => connectRef.current(), 3000);
     };
 
     ws.onerror = () => {
@@ -43,7 +44,11 @@ export function useOrderWebSocket(onMessage: (msg: WSMessage) => void) {
     };
 
     wsRef.current = ws;
-  }, [user?.id]);
+  }, [user]);
+
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   useEffect(() => {
     connect();
