@@ -31,32 +31,16 @@ class BulkDataSeeder extends Seeder
         // Reuse static password hashing to optimize performance
         $passwordHash = self::$hashedPassword ??= Hash::make('password');
 
-        // 2. Seed Admin Users (3 admins)
+        // 2. Seed Admin Users
         $admins = [
             [
-                'name' => 'Admin Utama',
-                'email' => 'admin@campus.ac.id',
+                'name' => 'Administrator',
+                'email' => 'administrator@uns.ac.id',
                 'password_hash' => $passwordHash,
                 'role' => 'admin',
                 'phone' => '081111111101',
                 'is_active' => true,
-            ],
-            [
-                'name' => 'Admin Support 1',
-                'email' => 'admin2@campus.ac.id',
-                'password_hash' => $passwordHash,
-                'role' => 'admin',
-                'phone' => '081111111102',
-                'is_active' => true,
-            ],
-            [
-                'name' => 'Admin Support 2',
-                'email' => 'admin3@campus.ac.id',
-                'password_hash' => $passwordHash,
-                'role' => 'admin',
-                'phone' => '081111111103',
-                'is_active' => true,
-            ],
+            ]
         ];
 
         foreach ($admins as $adminData) {
@@ -137,30 +121,6 @@ class BulkDataSeeder extends Seeder
         // 5. Seed Customer Users (25 customers)
         $customersList = [
             ['name' => 'Ihsan Restu Adi', 'email' => 'iihsannlearn@gmail.com'],
-            ['name' => 'Budi Santoso', 'email' => 'budi@campus.ac.id'],
-            ['name' => 'Siti Aminah', 'email' => 'siti@campus.ac.id'],
-            ['name' => 'Rian Hidayat', 'email' => 'rian@campus.ac.id'],
-            ['name' => 'Dewi Lestari', 'email' => 'dewi@campus.ac.id'],
-            ['name' => 'Andi Wijaya', 'email' => 'andi@campus.ac.id'],
-            ['name' => 'Mega Utami', 'email' => 'mega@campus.ac.id'],
-            ['name' => 'Fajar Nugraha', 'email' => 'fajar@campus.ac.id'],
-            ['name' => 'Putri Indah', 'email' => 'putri@campus.ac.id'],
-            ['name' => 'Rudi Hermawan', 'email' => 'rudi@campus.ac.id'],
-            ['name' => 'Eka Saputra', 'email' => 'eka@campus.ac.id'],
-            ['name' => 'Ayu Wandira', 'email' => 'ayu@campus.ac.id'],
-            ['name' => 'Dedi Kurniawan', 'email' => 'dedi@campus.ac.id'],
-            ['name' => 'Novi Anggraini', 'email' => 'novi@campus.ac.id'],
-            ['name' => 'Hendra Wijaya', 'email' => 'hendra@campus.ac.id'],
-            ['name' => 'Rina Pratama', 'email' => 'rina@campus.ac.id'],
-            ['name' => 'Yusuf Habibi', 'email' => 'yusuf@campus.ac.id'],
-            ['name' => 'Sarah Wijayanti', 'email' => 'sarah@campus.ac.id'],
-            ['name' => 'Rizal Fahmi', 'email' => 'rizal@campus.ac.id'],
-            ['name' => 'Tias Anggraeni', 'email' => 'tias@campus.ac.id'],
-            ['name' => 'Tommy Setiawan', 'email' => 'tommy@campus.ac.id'],
-            ['name' => 'Joko Susilo', 'email' => 'joko@campus.ac.id'],
-            ['name' => 'Maria Kristina', 'email' => 'maria@campus.ac.id'],
-            ['name' => 'David Christian', 'email' => 'david@campus.ac.id'],
-            ['name' => 'Anita Rahmawati', 'email' => 'anita@campus.ac.id'],
         ];
 
         $customers = [];
@@ -325,140 +285,12 @@ class BulkDataSeeder extends Seeder
                 $canteenMenuItems[$canteen->id][] = MenuItem::create([
                     'canteen_id' => $canteen->id,
                     'category_id' => $catId,
-                    'name' => $tmpl['name'] . ' ' . $canteen->name, // make name somewhat unique
+                    'name' => $tmpl['name'], // make name somewhat unique
                     'description' => $tmpl['desc'],
                     'price' => $tmpl['price'] + rand(-2000, 3000), // add price variation
                     'image_url' => $tmpl['image'],
                     'is_available' => true,
                 ]);
-            }
-        }
-
-        // 8. Seed Orders, OrderItems, and Payments (At least 20; we seed 60 orders)
-        $orderStatuses = ['delivered', 'preparing', 'confirmed', 'pending', 'waiting_for_payment', 'cancelled'];
-        
-        for ($i = 1; $i <= 60; $i++) {
-            // Pick a random customer
-            $customer = $customers[array_rand($customers)];
-            $customerPoints = $deliveryPointsGrouped[$customer->id];
-            $deliveryPoint = $customerPoints[array_rand($customerPoints)];
-
-            // Pick a random canteen
-            $canteen = $canteens[array_rand($canteens)];
-            $menuItems = $canteenMenuItems[$canteen->id];
-
-            // Pick a status based on probabilities
-            $randVal = rand(1, 100);
-            if ($randVal <= 50) {
-                $status = 'delivered'; // 50% delivered
-            } elseif ($randVal <= 70) {
-                $status = 'preparing'; // 20% active (preparing)
-            } elseif ($randVal <= 80) {
-                $status = 'pending'; // 10% waiting verification
-            } elseif ($randVal <= 90) {
-                $status = 'waiting_for_payment'; // 10% waiting payment
-            } else {
-                $status = 'cancelled'; // 10% cancelled
-            }
-
-            // Create order with ordered_at in the last 14 days
-            $daysAgo = rand(0, 14);
-            $orderTime = Carbon::now()->subDays($daysAgo)->subHours(rand(1, 23))->subMinutes(rand(1, 59));
-            $deliveryTime = $status === 'delivered' ? (clone $orderTime)->addMinutes(rand(15, 50)) : null;
-
-            $order = Order::create([
-                'user_id' => $customer->id,
-                'canteen_id' => $canteen->id,
-                'delivery_point_id' => $deliveryPoint->id,
-                'status' => $status,
-                'total_price' => 0.00, // will calculate below
-                'notes' => rand(0, 10) > 7 ? 'Tolong disegerakan, terima kasih!' : null,
-                'ordered_at' => $orderTime,
-                'delivered_at' => $deliveryTime,
-            ]);
-
-            // Add 1 to 3 items
-            $numItems = rand(1, 3);
-            $itemsKeys = array_rand($menuItems, min($numItems, count($menuItems)));
-            if (!is_array($itemsKeys)) {
-                $itemsKeys = [$itemsKeys];
-            }
-
-            $orderTotal = 0;
-            foreach ($itemsKeys as $key) {
-                $menuItem = $menuItems[$key];
-                $qty = rand(1, 3);
-                $subtotal = $menuItem->price * $qty;
-                $orderTotal += $subtotal;
-
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'menu_item_id' => $menuItem->id,
-                    'quantity' => $qty,
-                    'subtotal' => $subtotal,
-                    'notes' => rand(0, 10) > 8 ? 'Kurangi pedas' : null,
-                ]);
-            }
-
-            // Update order's total price
-            $order->update(['total_price' => $orderTotal]);
-
-            // Create corresponding payment
-            // Methods: cod, midtrans, qris
-            $payMethod = ['cod', 'midtrans', 'qris'][rand(0, 2)];
-            
-            // Payment status matching order status
-            if ($status === 'delivered' || $status === 'preparing' || $status === 'confirmed') {
-                $payStatus = 'paid';
-                $paidAt = (clone $orderTime)->addMinutes(rand(1, 10));
-            } elseif ($status === 'pending') {
-                // waiting_verification in canteen app is used when proof of payment is uploaded
-                $payStatus = 'waiting_verification';
-                $paidAt = null;
-            } elseif ($status === 'waiting_for_payment') {
-                $payStatus = 'pending';
-                $paidAt = null;
-            } else {
-                // cancelled order
-                $payStatus = rand(0, 1) ? 'failed' : 'expired';
-                $paidAt = null;
-            }
-
-            $proofImg = ($payStatus === 'paid' || $payStatus === 'waiting_verification') ? $qrisDemoUrl : null;
-
-            Payment::create([
-                'order_id' => $order->id,
-                'method' => $payMethod,
-                'status' => $payStatus,
-                'amount' => $orderTotal,
-                'proof_image_url' => $proofImg,
-                'snap_token' => $payMethod === 'midtrans' ? 'snap_token_' . uniqid() : null,
-                'payment_url' => $payMethod === 'midtrans' ? 'https://app.sandbox.midtrans.com/snap/v2/vtweb/' . uniqid() : null,
-                'midtrans_order_id' => $payMethod === 'midtrans' ? 'midtrans_' . uniqid() : null,
-                'expired_at' => $payStatus === 'pending' ? (clone $orderTime)->addHour() : null,
-                'paid_at' => $paidAt,
-            ]);
-
-            // 9. Seed notifications for this order (At least 20 in total)
-            if ($i <= 40) {
-                // User notification
-                Notification::create([
-                    'user_id' => $customer->id,
-                    'order_id' => $order->id,
-                    'message' => 'Pesanan #' . $order->id . ' Anda berstatus: ' . $status,
-                    'is_read' => rand(0, 1) === 1,
-                ]);
-
-                // Owner notification
-                $canteenOwner = User::where('id', $canteen->user_id)->first();
-                if ($canteenOwner) {
-                    Notification::create([
-                        'user_id' => $canteenOwner->id,
-                        'order_id' => $order->id,
-                        'message' => 'Pesanan baru #' . $order->id . ' masuk ke kantin Anda.',
-                        'is_read' => rand(0, 1) === 1,
-                    ]);
-                }
             }
         }
     }
