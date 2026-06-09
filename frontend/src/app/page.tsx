@@ -411,7 +411,7 @@ export default function HomePage() {
          </div>
       </section>
 
-      {/* 5. WHY CHOOSE US / FEATURES */}
+      {/* 5. WHY CHOOSE US / FEATURES
       <section className="w-full bg-foreground py-16 md:py-24 text-background">
          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -432,7 +432,7 @@ export default function HomePage() {
                ))}
             </div>
          </div>
-      </section>
+      </section> */}
 
       {/* 6. POPULAR CANTEENS */}
       <section className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-24">
