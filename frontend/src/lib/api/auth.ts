@@ -5,7 +5,9 @@ import { SignupPayload } from "@/types/auth";
 export const authApi = {
   getCsrf: async () => {
     return await apiClient.get('/sanctum/csrf-cookie', {
-      baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001'
+      baseURL: process.env.NEXT_PUBLIC_BACKEND_URL !== undefined
+        ? process.env.NEXT_PUBLIC_BACKEND_URL
+        : 'http://localhost:8001'
     });
   },
 
