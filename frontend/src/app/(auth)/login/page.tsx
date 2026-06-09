@@ -64,7 +64,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted/40">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">inCampus Food</CardTitle>
+          <CardTitle className="text-2xl font-bold">daisukefut</CardTitle>
           <CardDescription>Masuk ke akun kamu</CardDescription>
         </CardHeader>
         <CardContent>

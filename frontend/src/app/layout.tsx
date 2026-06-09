@@ -19,7 +19,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "inCampus Food Delivery",
+  title: "daisukefut",
   description: "Campus food delivery system",
 };
 

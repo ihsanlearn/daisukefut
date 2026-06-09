@@ -65,7 +65,7 @@ export default function CanteenSignupPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">inCampus Food</CardTitle>
+          <CardTitle className="text-2xl font-bold">daisukefut</CardTitle>
           <CardDescription>Mendaftar sebagai Mitra Kantin</CardDescription>
         </CardHeader>
         <CardContent>

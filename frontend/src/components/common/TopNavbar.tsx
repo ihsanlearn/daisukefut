@@ -33,12 +33,7 @@ import {
 import { Input } from "../ui/input";
 
 const navByRole = {
-  admin: [
-    { label: "Dashboard", href: "/admin" },
-    { label: "Kategori", href: "/admin/categories" },
-    { label: "Users", href: "/admin/users" },
-    { label: "Canteens", href: "/admin/canteens" },
-  ],
+  admin: [],
   canteen: [
     { label: "Dashboard", href: "/canteen" },
     { label: "Menu", href: "/canteen/menu" },
@@ -91,7 +86,7 @@ export default function TopNavbar() {
           <div className="bg-primary p-1 rounded-full">
             <Utensils className="h-4 w-4 text-white" />
           </div>
-          <span className="text-lg font-bold text-primary tracking-tight">inCampus</span>
+          <span className="text-lg font-bold text-primary tracking-tight">daisukefut</span>
         </Link>
 
         {/* Center Nav */}
@@ -224,7 +219,7 @@ export default function TopNavbar() {
                         <div className="bg-primary p-1.5 rounded-full">
                           <Utensils className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-xl font-black text-primary tracking-tight">inCampus</span>
+                        <span className="text-xl font-black text-primary tracking-tight">daisukefut</span>
                       </SheetTitle>
                     </SheetHeader>
 

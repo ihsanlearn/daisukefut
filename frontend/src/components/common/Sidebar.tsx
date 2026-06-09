@@ -63,7 +63,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-background border-r flex flex-col min-h-screen">
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold">inCampus Food</h1>
+        <h1 className="text-xl font-bold">daisukefut</h1>
         <div className="mt-2 flex items-center gap-2">
           <span className="text-sm text-muted-foreground truncate">{user?.name}</span>
           <Badge variant="secondary" className="text-xs">
