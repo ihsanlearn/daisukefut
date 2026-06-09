@@ -120,7 +120,7 @@ class BulkDataSeeder extends Seeder
 
         // 5. Seed Customer Users (25 customers)
         $customersList = [
-            ['name' => 'Ihsan Restu Adi', 'email' => 'iihsannlearn@gmail.com'],
+            ['name' => 'Muhammad Rafael', 'email' => 'rafaeldaisuke@gmail.com'],
         ];
 
         $customers = [];
